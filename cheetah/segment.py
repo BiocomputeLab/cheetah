@@ -203,7 +203,7 @@ def load_segmenter (model_filename, weights_filename):
     # Model is a *.json file and the weights are a *.h5 file
     with open(model_filename) as f:
         model_params = json.load(f)
-    new_seg = Segmenter(**model_kwargs)
+    new_seg = Segmenter(**model_params)
     new_seg.model.load_weights(weights_filename)
     return new_seg
 
