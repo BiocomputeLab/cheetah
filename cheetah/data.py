@@ -6,7 +6,7 @@ import numpy as np
 from skimage import io
 
 
-def load_image (filename, normalization='max'):
+def load_image (filename, normalization='max', in_array=False):
     '''Read data files and return numpy array'''
     image = io.imread(filename)
     # Normalize image
@@ -17,27 +17,35 @@ def load_image (filename, normalization='max'):
     # Make sure shape of data correct (width, height, channel)
     if len(image.shape) != 3:
         image = image[:, :, np.newaxis]
-    # np.concatenate(label_sets, axis=2) 
-    return image   
+    if in_array:
+        return image  
+    else:
+        image = image[np.newaxis, :, :, :]
+        return image
 
 
-def load_label_set (filename, n_classes):
-        '''Read label files and perform one-hot encoding,
-        single file which contains all classes''' 
-        # 0 is background, 1...n are the label classes
-        image = io.imread(filename)
-        if len(image.shape) != 3:
-            image = image[:, :, np.newaxis]
-        if image.max() >= 255:   # if image is black / white (8, 16 or 24 bit)
-            image = image / image.max()
-        image = np.around(image)  # round float type data (data augmentation)
-        one_hot_labels = []
-        for g in range(0, n_classes):
-            class_i = np.ones(image.shape, dtype='float32') * (image == g)
-            one_hot_labels.append(class_i)
-        # Move background class to last index
-        one_hot_labels = one_hot_labels[1:] + [one_hot_labels[0]]
-        return np.concatenate(one_hot_labels, axis=2)
+def load_label_set (filename, n_classes, in_array=False):
+    '''Read label files and perform one-hot encoding,
+    single file which contains all classes''' 
+    # 0 is background, 1...n are the label classes
+    image = io.imread(filename)
+    if len(image.shape) != 3:
+        image = image[:, :, np.newaxis]
+    if image.max() >= 255:   # if image is black / white (8, 16 or 24 bit)
+        image = image / image.max()
+    image = np.around(image)  # round float type data (data augmentation)
+    one_hot_labels = []
+    for g in range(0, n_classes):
+        class_i = np.ones(image.shape, dtype='float32') * (image == g)
+        one_hot_labels.append(class_i)
+    # Move background class to last index
+    one_hot_labels = one_hot_labels[1:] + [one_hot_labels[0]]
+    one_hot_labels = np.concatenate(one_hot_labels, axis=2)
+    if in_array:
+        return one_hot_labels
+    else:
+        one_hot_labels = one_hot_labels[np.newaxis, :, :, :]
+        return one_hot_labels
         
 
 def load_images (path, normalization='max', file_type=('.tif', '.png')):
@@ -49,7 +57,9 @@ def load_images (path, normalization='max', file_type=('.tif', '.png')):
             file_path = os.path.join(root, filename)
             # Ignore files that are incorrect type or hidden
             if file_path.lower().endswith(file_type) and not filename.startswith('.'):
-                images.append(load_image(file_path, normalization=normalization))
+                images.append(load_image(file_path, 
+                                         normalization=normalization,
+                                         in_array=True))
     if len(images) == 0:
         print('No image files found.')
         return None
@@ -69,7 +79,7 @@ def load_label_sets (path, n_classes, file_type=['.tif', '.png']):
             file_path = os.path.join(root, filename)
             # Ignore files that are incorrect type or hidden
             if file_path.lower().endswith(file_type) and not filename.startswith('.'):
-                label_sets.append(load_label_set(file_path, n_classes))
+                label_sets.append(load_label_set(file_path, n_classes, in_array=True))
     if len(label_sets) == 0:
         print('No label files found.')
         return None
