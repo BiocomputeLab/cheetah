@@ -11,13 +11,13 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 # Load data sets for training and validation
 train_X = ch.load_images('./data/train/images', normalization='max', 
-	                     file_type=('.png', '.tif'))
+                         file_type=('.png', '.tif'))
 train_Y = ch.load_label_sets('./data/train/labels', 2,
-	                         file_type=('.png', '.tif'))
+                             file_type=('.png', '.tif'))
 val_X = ch.load_images('./data/validate/images', normalization='max',
-	                   file_type=('.png', '.tif'))
+                       file_type=('.png', '.tif'))
 val_Y = ch.load_label_sets('./data/validate/labels', 2,
-	                       file_type=('.png', '.tif'))
+                           file_type=('.png', '.tif'))
 
 # Create a blank segmenter
 seg_train = ch.Segmenter(img_height=256, img_width=256, input_chn=1, n_classes=2)
