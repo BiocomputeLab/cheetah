@@ -7,6 +7,7 @@ from keras.models import Model, load_model
 from keras import backend as K
 import numpy as np
 from sklearn.metrics import f1_score
+import json
 
 
 def custom_categorical_crossentropy(class_weights):
@@ -198,32 +199,33 @@ def u_net_model(img_height, img_width, input_chn, n_classes, act_func='elu',
     return model
 
 
-def load_segmenter_full (full_model_filename):
-    # Full model should be a *.h5 file
-    model = load_model(full_model_filename)
-    return Segmenter(with_model=model)
-
-
 def load_segmenter (model_filename, weights_filename):
     # Model is a *.json file and the weights are a *.h5 file
     with open(model_filename) as f:
-        model_kwargs = json.load(f)
-    model = netw_models.u_net_model(*model_args, **model_kwargs)
-    model.load_weights(weights_filename)
-    return Segmenter(with_model=model)
+        model_params = json.load(f)
+    new_seg = Segmenter(**model_kwargs)
+    new_seg.model.load_weights(weights_filename)
+    return new_seg
 
 
 class Segmenter():
     '''Class for segmenting images based on a U-Net model'''
     
+    
     def __init__(self, img_height=128, img_width=128, input_chn=1, n_classes=2, act_func='elu',
-                regularizer='batchnorm', dropoutrate=0.1, with_model=None):
+                regularizer='batchnorm', dropoutrate=0.1):
         '''Initialization'''
-        if with_model == None:
-            self.model = u_net_model(img_height, img_width, input_chn, n_classes, act_func=act_func,
-                                     regularizer=regularizer, dropoutrate=dropoutrate)
-        else:
-            self.model = with_model
+        self.model = u_net_model(img_height, img_width, input_chn, n_classes, act_func=act_func,
+                                 regularizer=regularizer, dropoutrate=dropoutrate)
+        # Set all internal parameters for the model
+        self.model_params = {}
+        self.model_params['img_height'] = img_height
+        self.model_params['img_width'] = img_width
+        self.model_params['input_chn'] = input_chn
+        self.model_params['n_classes'] = n_classes
+        self.model_params['act_func'] = act_func
+        self.model_params['regularizer'] = regularizer
+        self.model_params['dropoutrate'] = dropoutrate
     
 
     def train (self, train_X, train_Y, val_X, val_Y, weighted_loss=True, class_weights=None,
@@ -250,17 +252,12 @@ class Segmenter():
         return model_fit
 
 
-    def save_full (self, filename):
-        # Should be a *.h5 file
-        self.model.save(filename)
-
-
     def save (self, model_filename, weights_filename):
-        # Model should be a *.h5 file
-        # Weights should be a *.json file
-        model.save_weights(weights_filename)
+        # Weights should be a *.h5 file
+        # Model parmaters should be a *.json file
+        self.model.save_weights(weights_filename)
         with open(model_filename, 'w') as file:
-            json.dump(model_kwargs, file)
+            json.dump(self.model_params, file)
         
         
     def test(self, test_X, test_Y, verbose=1, average=None):
