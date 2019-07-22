@@ -10,7 +10,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 # LOADING A TRAINED MODEL, TESTING AND PREDICTING USING NEW DATA
 
 # Create a new segmenter from the previously trained model
-seg_predict = ch.load_segmenter('test_model.json', 'test_model_weights.h5')
+seg_predict = ch.load_segmenter('./output/test_model.json', './output/test_model_weights.h5')
 
 # Load a single image and corrisponding label set (ground truth)
 single_image = ch.load_image('./data/test_image.png', normalization='max')
@@ -23,9 +23,14 @@ print('Prediction metric:', prediction_metric)
 # Predict the labels of new image with no ground truth
 predicted_labels = seg_predict.predict(single_image)
 
-
-plot_segmask(predicted_labels, y_true=single_label_set, class_to_plot=2, xtick_int=50,
+# Plot the predicted segmentation mask against graound truth
+ch.plot_segmask(predicted_labels[0], y_true=single_label_set[0], class_to_plot=2, xtick_int=50,
                  ytick_int=50, show_plt=False, save_imag=True,
-                 imag_name='test_image_predicted_mask', save_as='pdf'):
+                 imag_name='./output/test_image_predicted_mask', save_as='pdf')
+
+# Plot the pixel probability scores for each class (cell and background)
+ch.plot_predprob(predicted_labels[0], class_names=['cell','background'], n_classes=2, xtick_int=50,
+                  ytick_int=50, show_plt=False, save_imag=True,
+                  imag_name='./output/test_image_predicted_prob', save_as='pdf')
 
 ###############################################################################

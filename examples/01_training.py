@@ -32,9 +32,9 @@ ch.plot_acc_loss(model_fit.history['acc'],
                  model_fit.history['val_acc'],
                  model_fit.history['loss'],
                  model_fit.history['val_loss'],
-                 'test_segmentor')
+                 './output/test_segmentor')
 
 # Save the segmentation model and weights to files
-seg_train.save('test_model.json', 'test_model_weights.h5')
+seg_train.save('./output/test_model.json', './output/test_model_weights.h5')
 
 ###############################################################################

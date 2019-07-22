@@ -2,7 +2,9 @@
 # Everything we need is in the cheetah package
 import cheetah as ch
 
-# Load a single image and corrisponding label set (ground truth)
+# Load single and batches of images and output the shape of the tensor that
+# acts as an input to the segmenter
+
 single_image = ch.load_image('./data/test_image.png', normalization='max')
 print(single_image.dtype)
 print(single_image.shape)
