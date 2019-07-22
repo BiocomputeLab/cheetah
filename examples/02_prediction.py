@@ -10,7 +10,8 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 # LOADING A TRAINED MODEL, TESTING AND PREDICTING USING NEW DATA
 
 # Create a new segmenter from the previously trained model
-seg_predict = ch.load_segmenter('./output/test_model.json', './output/test_model_weights.h5')
+seg_predict = ch.Segmenter(model_filename='./output/test_model.json',
+	                       weights_filename='./output/test_model_weights.h5')
 
 # Load a single image and corrisponding label set (ground truth)
 single_image = ch.load_image('./data/test_image.png', normalization='max')
@@ -18,7 +19,7 @@ single_label_set = ch.load_label_set('./data/test_image_labels.png', 2)
 
 # Test quality of the trained segmenter on new image with known ground truth
 prediction_metric = seg_predict.test(single_image, single_label_set)
-print('Prediction metric:', prediction_metric)
+print('Prediction metrics:', prediction_metric)
 
 # Predict the labels of new image with no ground truth
 predicted_labels = seg_predict.predict(single_image)

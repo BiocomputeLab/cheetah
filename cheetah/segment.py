@@ -10,7 +10,7 @@ from sklearn.metrics import f1_score
 import json
 
 
-def custom_categorical_crossentropy(class_weights):
+def custom_categorical_crossentropy (class_weights):
     '''Custom categorical crossentropy loss function'''
     def pixelwise_loss(y_true, y_pred):
         '''Computation of weighted pixelwise loss'''
@@ -25,13 +25,13 @@ def custom_categorical_crossentropy(class_weights):
     return pixelwise_loss
    
 
-def custom_softmax(input_data):
+def custom_softmax (input_data):
     d = K.exp(input_data - K.max(input_data, axis=-1, keepdims=True))
     return d / K.sum(d, axis=-1, keepdims=True)
 
 
-def u_net_model(img_height, img_width, input_chn, n_classes, act_func='elu',
-                regularizer='batchnorm', dropoutrate=0.1):
+def u_net_model (img_height, img_width, input_chn, n_classes, act_func='elu',
+                 regularizer='batchnorm', dropoutrate=0.1):
     '''
     U-Net (encoder-decoder) fully convolutional network
     img_height: image height in pixels ==> height/32 must be an integer
@@ -199,34 +199,52 @@ def u_net_model(img_height, img_width, input_chn, n_classes, act_func='elu',
     return model
 
 
-def load_segmenter (model_filename, weights_filename):
-    # Model is a *.json file and the weights are a *.h5 file
-    with open(model_filename) as f:
-        model_params = json.load(f)
-    new_seg = Segmenter(**model_params)
-    new_seg.model.load_weights(weights_filename)
-    return new_seg
-
-
 class Segmenter():
     '''Class for segmenting images based on a U-Net model'''
     
     
-    def __init__(self, img_height=128, img_width=128, input_chn=1, n_classes=2, act_func='elu',
-                regularizer='batchnorm', dropoutrate=0.1):
+    def __init__ (self, img_height=128, img_width=128, input_chn=1, n_classes=2, act_func='elu',
+                  regularizer='batchnorm', dropoutrate=0.1,
+                  model_filename=None, weights_filename=None):
         '''Initialization'''
-        self.model = u_net_model(img_height, img_width, input_chn, n_classes, act_func=act_func,
-                                 regularizer=regularizer, dropoutrate=dropoutrate)
-        # Set all internal parameters for the model
-        self.model_params = {}
-        self.model_params['img_height'] = img_height
-        self.model_params['img_width'] = img_width
-        self.model_params['input_chn'] = input_chn
-        self.model_params['n_classes'] = n_classes
-        self.model_params['act_func'] = act_func
-        self.model_params['regularizer'] = regularizer
-        self.model_params['dropoutrate'] = dropoutrate
-    
+        if model_filename == None or weights_filename == None:
+            self.model = u_net_model(img_height, img_width, input_chn, n_classes, act_func=act_func,
+                                     regularizer=regularizer, dropoutrate=dropoutrate)
+            # Set all internal parameters for the model
+            self.model_params = {}
+            self.model_params['img_height'] = img_height
+            self.model_params['img_width'] = img_width
+            self.model_params['input_chn'] = input_chn
+            self.model_params['n_classes'] = n_classes
+            self.model_params['act_func'] = act_func
+            self.model_params['regularizer'] = regularizer
+            self.model_params['dropoutrate'] = dropoutrate
+        else:
+            self.model_params = {}
+            self.load(model_filename, weights_filename)  
+
+
+    def load (self, model_filename, weights_filename):
+        # Model is a *.json file and the weights are a *.h5 file
+        with open(model_filename) as f:
+            self.model_params_new = json.load(f)
+        self.model = u_net_model(self.model_params_new['img_height'], 
+                                 self.model_params_new['img_width'], 
+                                 self.model_params_new['input_chn'], 
+                                 self.model_params_new['n_classes'], 
+                                 act_func=self.model_params_new['act_func'],
+                                 regularizer=self.model_params_new['regularizer'],
+                                 dropoutrate=self.model_params_new['dropoutrate'])
+        self.model.load_weights(weights_filename)
+
+
+    def save (self, model_filename, weights_filename):
+        # Weights should be a *.h5 file
+        # Model parmaters should be a *.json file
+        self.model.save_weights(weights_filename)
+        with open(model_filename, 'w') as file:
+            json.dump(self.model_params, file)
+
 
     def train (self, train_X, train_Y, val_X, val_Y, weighted_loss=True, class_weights=None,
                batch_size=8, n_epochs=50):
@@ -250,17 +268,9 @@ class Segmenter():
         model_fit = self.model.fit(train_X, train_Y, batch_size, n_epochs,
                                    validation_data=(val_X, val_Y), shuffle=True)
         return model_fit
-
-
-    def save (self, model_filename, weights_filename):
-        # Weights should be a *.h5 file
-        # Model parmaters should be a *.json file
-        self.model.save_weights(weights_filename)
-        with open(model_filename, 'w') as file:
-            json.dump(self.model_params, file)
         
         
-    def test(self, test_X, test_Y, verbose=1, average=None):
+    def test (self, test_X, test_Y, verbose=1, average=None):
         '''
         Evaluate model on a test dataset
         test_X: input data (numpy array)
@@ -275,7 +285,7 @@ class Segmenter():
         return self._calc_metrics(test_Y, y_pred, average)
           
             
-    def predict(self, pred_X, verbose=1, return_format='list'):
+    def predict (self, pred_X, verbose=1, return_format='list'):
         '''
         Use model for prediction (unseen data)
         pred_X: input data (numpy array)
@@ -296,7 +306,7 @@ class Segmenter():
             return y_pred
         
 
-    def _calc_metrics(self, y_true, y_pred, average):
+    def _calc_metrics (self, y_true, y_pred, average):
         '''Calculate metrics (overall accuracy, F1 score)'''
         y_pred_max = np.argmax(y_pred, axis=-1)
         y_true_max = np.argmax(y_true, axis=-1)
