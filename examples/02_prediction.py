@@ -23,4 +23,9 @@ print('Prediction metric:', prediction_metric)
 # Predict the labels of new image with no ground truth
 predicted_labels = seg_predict.predict(single_image)
 
+
+plot_segmask(predicted_labels, y_true=single_label_set, class_to_plot=2, xtick_int=50,
+                 ytick_int=50, show_plt=False, save_imag=True,
+                 imag_name='test_image_predicted_mask', save_as='pdf'):
+
 ###############################################################################
