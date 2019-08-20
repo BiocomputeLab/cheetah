@@ -56,8 +56,8 @@ def plot_predprob(y_pred, class_names=None, n_classes=3, xtick_int=50,
         ax = grid[i]
         im = ax.imshow(y_pred[:, :, i], vmin=0, vmax=1, cmap='jet', 
                        interpolation='nearest')
-        ax.set_xlim(0, y_pred[:, :, i].shape[0])
-        ax.set_ylim(0, y_pred[:, :, i].shape[1])
+        ax.set_xlim(0, y_pred[:, :, i].shape[1])
+        ax.set_ylim(0, y_pred[:, :, i].shape[0])
         ax.set_xticks(np.arange(0, y_pred.shape[1]+1, xtick_int))
         ax.set_yticks(np.arange(0, y_pred.shape[0]+1, ytick_int))
         ax.set_xlabel(r'image width [pixel]')
@@ -98,8 +98,8 @@ def plot_segmask(y_pred, y_true=None, class_to_plot=2, xtick_int=50,
         for i in range(0, 2):
             ax = grid[i]
             ax.imshow(grid_imag[i], vmin=0, vmax=1, cmap=grid_cmap[i])
-            ax.set_xlim(0, grid_imag[i].shape[0])
-            ax.set_ylim(0, grid_imag[i].shape[1])
+            ax.set_xlim(0, grid_imag[i].shape[1])
+            ax.set_ylim(0, grid_imag[i].shape[0])
             ax.set_xticks(np.arange(0, pred_mask.shape[1]+1, xtick_int))
             ax.set_yticks(np.arange(0, pred_mask.shape[0]+1, ytick_int))
             ax.set_xlabel(r'image width [pixel]')
