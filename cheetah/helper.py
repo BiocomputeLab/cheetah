@@ -2,6 +2,7 @@
 import numpy as np
 from sklearn.utils import resample
 
+
 def bootstrap_mean_CI(data_samples, alpha=0.95, n_iterations=1000):
     '''Calculate the bootstrapped mean applying the percentile method to
        estimate a confidence interval (Efron method)'''

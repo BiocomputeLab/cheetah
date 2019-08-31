@@ -14,6 +14,7 @@ warnings.filterwarnings("ignore")
 class DataAugmentor():
     '''Class for data augmentation through patch selection and manipulation'''
     
+
     def generate_patches(self, input_images_path, input_labels_path,
                          output_images_path, output_labels_path, 
                          n_patches, patch_shape=(256, 256),
@@ -58,9 +59,9 @@ class DataAugmentor():
                 img_patch_n = cur_img[rand_pair[n][0]:(rand_pair[n][0] + patch_shape[0]), 
                                       rand_pair[n][1]:(rand_pair[n][1] + patch_shape[1])
                                       ].astype(cur_img.dtype)
-                lab_patch_n = cur_img[rand_pair[n][0]:(rand_pair[n][0] + patch_shape[0]), 
+                lab_patch_n = cur_lab[rand_pair[n][0]:(rand_pair[n][0] + patch_shape[0]), 
                                       rand_pair[n][1]:(rand_pair[n][1] + patch_shape[1])
-                                      ].astype(cur_img.dtype)
+                                      ].astype(cur_lab.dtype)
                 # Save patch n to file (assume 3 letter extension)
                 img_patch_filename = output_images_path + '/' + cur_img_filename[:-4] + '_patch_' + str(n) + cur_img_filename[-4:]
                 lab_patch_filename = output_labels_path + '/' + cur_lab_filename[:-4] + '_patch_' + str(n) + cur_lab_filename[-4:]
@@ -98,15 +99,18 @@ class DataAugmentor():
                    preserve_range=True).astype(image.dtype)
         io.imsave(fname=new_filename, arr=new_imag)
 
+
     def _horizontal_flip(self, image, patch_filename):
         new_filename = patch_filename[:-4] + "_hfl" + patch_filename[-4:]
         new_imag = image[:, ::-1]
         io.imsave(fname=new_filename, arr=new_imag)
 
+
     def _vertical_flip(self, image, patch_filename):
         new_filename = patch_filename[:-4] + "_vfl" + patch_filename[-4:]
         new_imag = image[::-1, :]
         io.imsave(fname=new_filename, arr=new_imag)
+
 
     def _scale(self, scale_factor, image, patch_filename):
         if scale_factor is None or scale_factor < 1:
@@ -120,6 +124,7 @@ class DataAugmentor():
         top = bottom+image.shape[1]
         crop_imag = new_imag[bottom:top, left:right].astype(image.dtype)
         io.imsave(fname=new_filename, arr=new_imag)
+
 
     def _shear(self, shear_factor, image, patch_filename):
         if shear_factor is None or shear_factor < 0.1 or shear_factor > 0.5:
