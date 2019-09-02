@@ -123,7 +123,7 @@ class DataAugmentor():
         bottom = int((new_imag.shape[1]-image.shape[0])/2)
         top = bottom+image.shape[1]
         crop_imag = new_imag[bottom:top, left:right].astype(image.dtype)
-        io.imsave(fname=new_filename, arr=new_imag)
+        io.imsave(fname=new_filename, arr=crop_imag)
 
 
     def _shear(self, shear_factor, image, patch_filename):
