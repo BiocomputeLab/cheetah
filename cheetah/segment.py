@@ -26,6 +26,7 @@ def custom_categorical_crossentropy (class_weights):
    
 
 def custom_softmax (input_data):
+    '''Custom soft max function'''
     d = K.exp(input_data - K.max(input_data, axis=-1, keepdims=True))
     return d / K.sum(d, axis=-1, keepdims=True)
 
