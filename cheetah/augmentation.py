@@ -21,7 +21,7 @@ class DataAugmentor():
                          prob_augment=0.0,
                          rotate_prob=0.2, hflip_prob=0.2, 
                          vflip_prob=0.2, scale_prob=0.2, scale_factor=1.2, 
-                         shear_prob=0.2, shear_factor=0.3):
+                         shear_prob=0.2, shear_factor=0.3, adjust_hist_prob=0.2, num_points=3):
         # Extract list of all filenames sorted
         image_files = sorted(gl.glob(input_images_path + '/*.*'))
         label_files = sorted(gl.glob(input_labels_path + '/*.*'))
@@ -90,6 +90,10 @@ class DataAugmentor():
                     if random.uniform(0, 1) < scale_prob:
                         self._shear(shear_factor, img_patch_n, img_patch_filename)
                         self._shear(shear_factor, lab_patch_n, lab_patch_filename)
+                    # Adjust Histogram
+                    if random.uniform(0, 1) < adjust_hist_prob:
+                        self._adjust_histogram(self, num_points, img_patch_n, img_patch_filename)
+                        io.imsave(fname=lab_patch_filename, arr=lab_patch_n)
 
 
     def _rotate(self, image, patch_filename):
@@ -134,4 +138,19 @@ class DataAugmentor():
         new_imag = trf.warp(image, inverse_map=affine_tf, mode='reflect', 
                    preserve_range=True).astype(image.dtype)
         io.imsave(fname=new_filename, arr=new_imag)
+
+    def _adjust_histogram(self, num_points, image, patch_filename):
+        '''
+        Manipulates the histogram of the image to capture changes in illumination between
+        experiments (provided by Daniel Eaton).
+        '''
+        new_filename = patch_filename[:-4] + "_his" + patch_filename[-4:]
+        points = np.linspace(0,1,num=num_points+2)
+        sort_points = copy.copy(points)
+        rand_points = np.random.uniform(low=0.1,high=0.9,size=num_points)
+        sort_points[1:-1] = np.sort(random_points)
+        mapping = interpolate.PchipInterpolator(points, sort_points)
+        new_imag = mapping(image).astype(image.dtype)
+        io.imsave(fname=new_filename, arr=new_imag)
+        return mapping(image)
         
