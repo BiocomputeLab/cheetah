@@ -48,11 +48,13 @@ def load_label_set (filename, n_classes, in_array=False):
 
 def load_images (path, normalization='max', file_type=('.tif', '.png')):
     images = []
+    filenames = []
     # Walk recursively through the given path looking for files
     abs_path = os.path.abspath(path)
     for root, subdirs, files in os.walk(abs_path):
         for filename in files:
             file_path = os.path.join(root, filename)
+            filenames.append(file_path)
             # Ignore files that are incorrect type or hidden
             if file_path.lower().endswith(file_type) and not filename.startswith('.'):
                 images.append(load_image(file_path, 
@@ -65,7 +67,7 @@ def load_images (path, normalization='max', file_type=('.tif', '.png')):
         image_array = np.zeros((len(images), *images[0].shape), dtype='float32')
         for i in range(image_array.shape[0]):
             image_array[i, :, :, :] = images[i]
-        return image_array
+        return image_array, filenames
 
 
 def load_label_sets (path, n_classes, file_type=['.tif', '.png']):

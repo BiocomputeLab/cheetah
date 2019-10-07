@@ -21,7 +21,8 @@ class DataAugmentor():
                          prob_augment=0.0,
                          rotate_prob=0.2, hflip_prob=0.2, 
                          vflip_prob=0.2, scale_prob=0.2, scale_factor=1.2, 
-                         shear_prob=0.2, shear_factor=0.3, adjust_hist_prob=0.2, num_points=3):
+                         shear_prob=0.2, shear_factor=0.3,
+                         adjust_hist_prob=0.2, num_points=3):
         # Extract list of all filenames sorted
         image_files = sorted(gl.glob(input_images_path + '/*.*'))
         label_files = sorted(gl.glob(input_labels_path + '/*.*'))
