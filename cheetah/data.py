@@ -54,9 +54,9 @@ def load_images (path, normalization='max', file_type=('.tif', '.png')):
     for root, subdirs, files in os.walk(abs_path):
         for filename in files:
             file_path = os.path.join(root, filename)
-            filenames.append(file_path)
             # Ignore files that are incorrect type or hidden
             if file_path.lower().endswith(file_type) and not filename.startswith('.'):
+                filenames.append(file_path)
                 images.append(load_image(file_path, 
                                          normalization=normalization,
                                          in_array=True))
