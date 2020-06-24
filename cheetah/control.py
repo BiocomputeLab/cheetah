@@ -8,7 +8,7 @@ def empty_analyse (t_step):
 
 
 def empty_control_action (t_step, data):
-    '''Empty analyse function (does nothing)'''
+    '''Empty control action function (does nothing)'''
     return None
 
 

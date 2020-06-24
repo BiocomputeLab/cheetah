@@ -2,6 +2,7 @@
 Cheetah
 """
 
+from .analyse import *
 from .segment import *
 from .data import *
 from .augmentation import *
