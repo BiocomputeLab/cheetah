@@ -1,14 +1,7 @@
 
-
-
-# FOR DEVELOPMENT
-data*
-mammalian_cells/
-wan/
-
 # Don't keep the models on GitHub
-examples/output/*.h5
-examples/output/*.json
+*.h5
+*.json
 
 # macOS
 .DS_Store
