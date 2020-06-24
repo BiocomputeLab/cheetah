@@ -1,45 +1,17 @@
-# Combine a number of separate label images generated from MATLAB into a single image.
-# Author: Thomas E. Gorochowski <thomas.gorochowski@bristol.ac.uk>
 
 import numpy as np
-import skimage as sk
-import glob as gl
-
 import random
 import colorsys
-
 import scipy
-
 import math
+import skimage.measure
+import skimage.draw
+import skimage.morphology
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
-from matplotlib.colors import LinearSegmentedColormap
+import matplotlib.colors
 import numpy as np
-import pandas as pd
 
-import skimage.measure
-from skimage import io
-from skimage.draw import ellipse
-from skimage.measure import label, regionprops, regionprops_table
-from skimage.transform import rotate
-from skimage.morphology import remove_small_objects
-
-###################################################################################################
-
-# This should be where the raw images are held
-data_path = './_data'
-
-# Where the combined label files should be saved
-output_path = './_output'
-
-images = []
-files = sorted(gl.glob(data_path + '/*.png'))
-for f in files:
-    cur_image = io.imread(f)
-    cur_mask = cur_image > 0
-    images.append(cur_mask)
- 
-###################################################################################################
 
 # Indexes in the region property array
 ID = 0
@@ -54,13 +26,14 @@ ORIENTATION = 8
 MAJOR_LENGTH = 9
 MINOR_LENGTH = 10
 
+
 def extract_mask_labels (img, background=0, connectivity=1, min_size=15):
     # Remove small regions (noise)
     if min_size is not None:
-        remove_small_objects(img, min_size=min_size, connectivity=connectivity, in_place=True)
+        skimage.morphology.remove_small_objects(img, min_size=min_size, connectivity=connectivity, in_place=True)
     # Extract connected components in mask and region properties
     label_img, num_of_labels = skimage.measure.label(img, background=background, connectivity=connectivity, return_num=True)
-    props = regionprops_table(label_img, properties=('centroid',
+    props = skimage.measure.regionprops_table(label_img, properties=('centroid',
                                                      'area',
                                                      'bbox',
                                                      'orientation',
@@ -80,6 +53,7 @@ def extract_mask_labels (img, background=0, connectivity=1, min_size=15):
     new_props[1:, MAJOR_LENGTH] = props['major_axis_length']
     new_props[1:, MINOR_LENGTH] = props['minor_axis_length']
     return label_img, new_props
+
 
 def relabel_image (img, props, img_prev, props_prev, max_dist=10):
     # The new relabelled data
@@ -108,11 +82,24 @@ def relabel_image (img, props, img_prev, props_prev, max_dist=10):
         img_new[img == props[r_idx, 0]] = props_new[r_idx, 0]
     return img_new, props_new
 
-def plot_labelled_image (img, props, clist, output_filename=None, details=False):
+
+def cell_count (props):
+    return props.shape[0]-1
+
+
+def single_cell_intensities (intensity_img, mask_img, props):
+    return None, None
+
+
+def all_cell_intensities (intensity_img, mask_img, props):
+    return None, None
+
+
+def plot_labelled_image (img, props, clist, output_filename=None, details=False, max_number=10000):
     fig = plt.figure(figsize=(7.0, 7.0))
     gs = gridspec.GridSpec(1, 1)
     ax = plt.subplot(gs[0])
-    ax.imshow(img, cmap=clist, vmax=MAX_CELLS)
+    ax.imshow(img, cmap=clist, vmax=max_number)
     if details == True:
         for idx in range(props.shape[0]-1):
             region_idx = idx+1
@@ -130,6 +117,8 @@ def plot_labelled_image (img, props, clist, output_filename=None, details=False)
             bx = (minc, maxc, maxc, minc, minc)
             by = (minr, minr, maxr, maxr, minr)
             ax.plot(bx, by, '-w', linewidth=1.0, alpha=0.5)
+    ax.set_xticks([])
+    ax.set_yticks([])
     # Sort out the formatting of the plot (fill entire frame)
     plt.subplots_adjust(hspace=.0 , wspace=.0, left=.1, right=.9, top=.9, bottom=.1)
     if output_filename == None:
@@ -138,7 +127,8 @@ def plot_labelled_image (img, props, clist, output_filename=None, details=False)
         fig.savefig(output_filename, transparent=True)
         plt.close('all')
 
-def generate_cmap (max_number, seed=1):
+
+def generate_cmap (max_number=10000, seed=1):
     random.seed(seed)
     clist = [ (0,0,0) ]
     for idx in range(max_number):
@@ -146,22 +136,5 @@ def generate_cmap (max_number, seed=1):
         h,s,l = random.random(), 0.5 + random.random()/2.0, 0.4 + random.random()/5.0
         r,g,b = [int(256*i) for i in colorsys.hls_to_rgb(h,l,s)]
         clist.append( (r/256.0,g/256.0,b/256.0) )
-    cm = LinearSegmentedColormap.from_list('cheetah', clist, N=max_number)
+    cm = matplotlib.colors.LinearSegmentedColormap.from_list('cheetah', clist, N=max_number)
     return cm
-
-###################################################################################################
-
-# Colourmap to use (pre-generate so colours are fixed)
-MAX_CELLS = 100000
-cm = generate_cmap(MAX_CELLS, seed=1)
-
-label, props = extract_mask_labels(images[0], background=0, connectivity=1, min_size=15)
-plot_labelled_image(label, props, cm, output_filename='_output/image_0.png', details=False)
-for idx in range(len(images)-1):
-    new_label, new_props = extract_mask_labels(images[idx+1], background=0, connectivity=1, min_size=15)
-    relabel, reprops = relabel_image(new_label, new_props, label, props, max_dist=10)
-    plot_labelled_image(relabel, reprops, cm, output_filename='_output/image_'+str(idx+1)+'.png', details=False)
-    label = relabel
-    props = reprops
-
-###################################################################################################
