@@ -87,12 +87,18 @@ def cell_count (props):
     return props.shape[0]-1
 
 
-def single_cell_intensities (intensity_img, mask_img, props):
-    return None, None
+def single_cell_avg_intensities (intensity_img, mask_img, props):
+    avg_intensities = np.zeros(props.shape[0]-1)
+    for idx in range(props.shape[0]-1):
+        cell_num = idx+1
+        avg_intensities[idx] = np.sum(intensity_img[mask_img == props[cell_num, ID]])/props[cell_num, AREA]
+    return avg_intensities
 
 
-def all_cell_intensities (intensity_img, mask_img, props):
-    return None, None
+def mask_avg_intensity (intensity_img, mask_img, props):
+    avg_intensity = np.zeros(props.shape[0]-1)
+    avg_intensity = np.sum(intensity_img[mask_img > 0])/np.sum(props[:, AREA])
+    return avg_intensity
 
 
 def plot_labelled_image (img, props, clist, output_filename=None, details=False, max_number=10000):
