@@ -3,12 +3,12 @@ setup(
   name = 'cheetah',
   packages = ['cheetah'],
   version = '1.0',
-  description = 'Genetic design visualization',
+  description = 'A computational toolkit for cybergenetic control',
   author = 'Thomas Gorochowski, David Haener',
   author_email = 'thomas.gorochowski@bristol.ac.uk',
   url = 'https://github.com/BiocomputeLab/cheetah',
   download_url = 'https://github.com/BiocomputeLab/cheetah/archive/1.0.tar.gz',
-  keywords = ['image analysis', 'machine learning', 'microscopy'],
+  keywords = ['image analysis', 'machine learning', 'microscopy', 'cybergenetic control'],
   classifiers = [],
   scripts=[]
 )
