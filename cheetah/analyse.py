@@ -87,17 +87,21 @@ def cell_count (props):
     return props.shape[0]-1
 
 
-def single_cell_avg_intensities (intensity_img, mask_img, props):
+def single_cell_avg_intensities (intensity_img, mask_img, props, norm_to_background=False):
     avg_intensities = np.zeros(props.shape[0]-1)
     for idx in range(props.shape[0]-1):
         cell_num = idx+1
         avg_intensities[idx] = np.sum(intensity_img[mask_img == props[cell_num, ID]])/props[cell_num, AREA]
+    if norm_to_background == True:
+        avg_intensities = avg_intensities - np.mean(intensity_img[mask_img == 0])
     return avg_intensities
 
 
-def mask_avg_intensity (intensity_img, mask_img, props):
+def mask_avg_intensity (intensity_img, mask_img, props, norm_to_background=False):
     avg_intensity = np.zeros(props.shape[0]-1)
     avg_intensity = np.sum(intensity_img[mask_img > 0])/np.sum(props[:, AREA])
+    if norm_to_background == True:
+        avg_intensity = avg_intensity - np.mean(intensity_img[mask_img == 0])
     return avg_intensity
 
 

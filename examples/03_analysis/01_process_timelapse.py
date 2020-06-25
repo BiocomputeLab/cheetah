@@ -74,8 +74,8 @@ for img_idx in range(len(mask_imgs)-2): #REMOVE WHEN WORKING (SET TO -2)
     props = reprops
 
     count_list.append(ch.cell_count(reprops))
-    fluor_avg_list.append(ch.mask_avg_intensity(fluo_imgs[img_idx+1], relabel, reprops))
-    ss_avg_int = ch.single_cell_avg_intensities(fluo_imgs[img_idx+1], relabel, reprops)
+    fluor_avg_list.append(ch.mask_avg_intensity(fluo_imgs[img_idx+1], relabel, reprops, norm_to_background=True))
+    ss_avg_int = ch.single_cell_avg_intensities(fluo_imgs[img_idx+1], relabel, reprops, norm_to_background=True)
     
     fluor_ss_avg_list.append(np.mean(ss_avg_int))
     fluor_ss_low_list.append(np.percentile(ss_avg_int, 25))
@@ -131,7 +131,7 @@ for img_idx in range(len(mask_imgs)-2): #REMOVE WHEN WORKING (SET TO -2)
     ax = plt.subplot(gs[2, :])
     ax.plot(t_list, count_list, color=cmap['l_blue'], linewidth=4)
     ax.set_ylabel('Cell count')
-    ax.set_xlim([0, 1390])
+    ax.set_xlim([0, 1397])
     ax.set_ylim([0, 300])
 
     ax.spines['top'].set_visible(False)
@@ -151,38 +151,20 @@ for img_idx in range(len(mask_imgs)-2): #REMOVE WHEN WORKING (SET TO -2)
     ax.set_ylabel('GFP (a.u.)')
     ax.set_xlabel('Time (min)')
     #ax.set_yscale('log')
-    ax.set_xlim([0, 1390])
-    ax.set_ylim([0, 26000])
+    ax.set_xlim([0, 1397])
+    ax.set_ylim([0, 19500])
 
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
     ax.get_xaxis().tick_bottom()
     ax.get_yaxis().tick_left()
 
-    """
     #################################################################################
-    # Orientation plot - We don't use, but could be added easily
-    ax = plt.subplot(gs[3], projection='polar')
-    n_numbers = 100
-    bins_number = 20  # the [0, 360) interval will be subdivided into this
-    # number of equal bins
-    bins = np.linspace(0.0, 2 * np.pi, bins_number + 1)
-    #angles = 2 * np.pi * np.random.rand(n_numbers)
-    angles = reprops[1:, ch.ORIENTATION]
-    n, _, _ = plt.hist(angles, bins)
-    width = 2 * np.pi / bins_number
-    #ax = plt.subplot(1, 1, 1, projection='polar')
-    bars = ax.bar(bins[:bins_number], n, width=width, bottom=0.0)
-    ax.set_theta_offset(np.pi/2.0)
-    for bar in bars:
-        bar.set_alpha(0.5)
-    ax.set_xticks([])
-    ax.set_yticks([])
-    """
+    # Format the plot and save
 
     # Format the subplots and save
-    plt.subplots_adjust(hspace=.04, wspace=.02, left=.09, right=.99, top=.99, bottom=.04)
-    fig.savefig('./output/analysis_timelapse/out'+str(img_idx+1)+'.png', facecolor=fig.get_facecolor(), transparent=True)
+    plt.subplots_adjust(hspace=.04, wspace=.04, left=.09, right=.99, top=.99, bottom=.04)
+    fig.savefig(output_path+'/analysis_timelapse/out'+str(img_idx+1)+'.png', facecolor=fig.get_facecolor(), transparent=True)
     plt.close('all')
     # Add the new time point
     t_list.append(t_list[-1]+5)
