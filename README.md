@@ -2,8 +2,7 @@
 
 Cheetah is a simple to use Python library to support the development of analysis workflows and real-time cybergenetic control platforms that combine microscopy imaging and environmental control. The toolkit relies on a U-Net convolutional neural network to perform cell segmentation and uses this with additional functions that can label, track and generate control signals based on this information. If you make use of Cheetah in your work we ask that you cite the following paper:
 
-> **Cheetah: a computational toolkit for cybergenetic control**
->Pedone E., de Cesare I., Rubio Denniss A., Zamora C., Haener D., Postiglione L., Shannon B., Savery N., Grierson C.S., di Barnardo M., Gorochowski T.E. & Marucci M., bioRxiv (2020).
+> **Cheetah: a computational toolkit for cybergenetic control.** Pedone E., de Cesare I., Rubio Denniss A., Zamora C., Haener D., Postiglione L., Shannon B., Savery N., Grierson C.S., di Barnardo M., Gorochowski T.E. & Marucci M., bioRxiv (2020).
 
 ## Getting started
 
