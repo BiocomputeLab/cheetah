@@ -12,15 +12,15 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 # Load data sets for training and validation
 train_X = ch.load_images('./data/patches_train/images', normalization='max', 
                          file_type=('.png', '.tif'))
-train_Y = ch.load_label_sets('./data/patches_train/labels', 4,
+train_Y = ch.load_label_sets('./data/patches_train/labels', 3,
                              file_type=('.png', '.tif'))
 val_X = ch.load_images('./data/patches_validate/images', normalization='max',
                        file_type=('.png', '.tif'))
-val_Y = ch.load_label_sets('./data/patches_validate/labels', 4,
+val_Y = ch.load_label_sets('./data/patches_validate/labels', 3,
                            file_type=('.png', '.tif'))
 
 # Create a blank segmenter
-seg_train = ch.Segmenter(img_height=512, img_width=512, input_chn=1, n_classes=4)
+seg_train = ch.Segmenter(img_height=512, img_width=512, input_chn=1, n_classes=3)
 
 # Train the segmenter using training data and validate using separate images
 model_fit = seg_train.train(train_X, train_Y, val_X, val_Y,

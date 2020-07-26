@@ -67,7 +67,7 @@ def load_images (path, normalization='max', file_type=('.tif', '.png')):
         image_array = np.zeros((len(images), *images[0].shape), dtype='float32')
         for i in range(image_array.shape[0]):
             image_array[i, :, :, :] = images[i]
-        return image_array, filenames
+        return image_array #, filenames
 
 
 def load_label_sets (path, n_classes, file_type=['.tif', '.png']):
