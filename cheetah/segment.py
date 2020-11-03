@@ -1,10 +1,10 @@
 
 import tensorflow as tf
-from keras import layers
-from keras import Input
-from keras import optimizers
-from keras.models import Model, load_model
-from keras import backend as K
+from tensorflow.keras import layers
+from tensorflow.keras import Input
+from tensorflow.keras import optimizers
+from tensorflow.keras.models import Model, load_model
+from tensorflow.keras import backend as K
 import numpy as np
 from sklearn.metrics import f1_score
 import json
@@ -42,7 +42,7 @@ def custom_categorical_crossentropy (class_weights):
         # Compute loss
         epsilon = tf.constant(K.epsilon(), y_pred.dtype.base_dtype)
         y_pred = tf.clip_by_value(y_pred, epsilon, 1. - epsilon)
-        return - tf.reduce_sum(y_true * tf.log(y_pred) * w_tensor,
+        return - tf.reduce_sum(y_true * tf.math.log(y_pred) * w_tensor,
                                len(y_pred.get_shape()) - 1)
     return pixelwise_loss
    
