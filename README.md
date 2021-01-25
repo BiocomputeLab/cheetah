@@ -8,9 +8,9 @@ Cheetah is a simple to use Python library to support the development of analysis
 
 If you would like to use Cheetah for your own project, we recommend using Anaconda Python and creating a separate environment will all the necessary dependancies. This can be done after install Anaconda by running the following command:
 
-`conda create -n py36 python=3.6
-conda activate py36
-conda install keras==2.0.8 matplotlib numpy scipy scikit-image scikit-learn`
+`conda create -n py36 python=3.6`
+`conda activate py36`
+`conda install keras==2.0.8 matplotlib numpy scipy scikit-image scikit-learn`
 
 To get started, we also recommend taking a look at some of the examples provided and reading the associated publication to better understand how all aspects of the functionality can be used.
 
