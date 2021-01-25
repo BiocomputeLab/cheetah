@@ -14,7 +14,11 @@ If you would like to use Cheetah for your own project, we recommend using Anacon
 
 `conda install keras==2.0.8 matplotlib numpy scipy scikit-image scikit-learn`
 
-To get started, we also recommend taking a look at some of the examples provided and reading the associated publication to better understand how all aspects of the functionality can be used.
+To test if this has worked successfully, it should now be possible to run the training step for our bacteria example in the `examples/01_bacteria` by running the command:
+
+`python 02_training.py`
+
+This should start up the training cycle using the example bacteria training and validation images provided as part of the package. We also recommend taking a look at some of the other examples provided and reading the associated publication to better understand how all aspects of the functionality can be used.
 
 ## Dependences
 
