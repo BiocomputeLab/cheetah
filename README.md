@@ -6,7 +6,7 @@ Cheetah is a simple to use Python library to support the development of analysis
 
 ## Getting started
 
-If you would like to use Cheetah for your own project, we recommend using Anaconda Python and creating a separate environment will all the necessary dependancies. This can be done after install Anaconda by running the following commands:
+If you would like to use Cheetah for your own project, we recommend using Anaconda Python and creating a separate environment will all the necessary dependancies. This can be done after install Anaconda by running the following command:
 
 `conda create -n py36 python=3.6
 conda activate py36
